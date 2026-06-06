@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "Game Đào Vàng - Gold Miner",
   "scripts": {
-    "start": "serve . -p 3000",
+    "start": "node server.js",
     "dev": "serve . -p 3000"
   },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
   "devDependencies": {
-    "serve": "^14.2.4" 
+    "serve": "^14.2.4"
   }
 }
