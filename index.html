@@ -2,46 +2,60 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Đào Vàng</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="app">
     <header class="hud">
-      <div class="hud-item">
-        <span class="label">Màn</span>
-        <span id="level">1</span>
+      <div class="hud-stats">
+        <div class="hud-item">
+          <span class="label">Màn</span>
+          <span id="level">1</span>
+        </div>
+        <div class="hud-item">
+          <span class="label">Tiền</span>
+          <span id="money">$0</span>
+        </div>
+        <div class="hud-item">
+          <span class="label">Mục tiêu</span>
+          <span id="target">$650</span>
+        </div>
+        <div class="hud-item">
+          <span class="label">Giờ</span>
+          <span id="timer">60</span>
+        </div>
       </div>
-      <div class="hud-item">
-        <span class="label">Tiền</span>
-        <span id="money">$0</span>
-      </div>
-      <div class="hud-item">
-        <span class="label">Mục tiêu</span>
-        <span id="target">$650</span>
-      </div>
-      <div class="hud-item">
-        <span class="label">Thời gian</span>
-        <span id="timer">60</span>
-      </div>
+      <button id="btn-sound" class="btn-icon" type="button" aria-label="Bật tắt âm thanh">🔊</button>
     </header>
 
-    <canvas id="game" width="900" height="600"></canvas>
+    <div class="game-area">
+      <canvas id="game" width="900" height="600"></canvas>
+      <button id="btn-hook" class="btn-hook" type="button" disabled>
+        <span class="btn-hook-icon">⛏️</span>
+        <span class="btn-hook-text">THẢ MÓC</span>
+      </button>
+    </div>
 
     <div id="overlay" class="overlay hidden">
       <div class="panel">
         <h1 id="overlay-title">Đào Vàng</h1>
-        <p id="overlay-msg">Nhấn Space hoặc Click để thả móc. Thu thập đủ tiền trước khi hết giờ!</p>
-        <button id="btn-start">Bắt đầu</button>
+        <p id="overlay-msg">Chạm màn hình hoặc bấm nút THẢ MÓC để hút vàng. Thu đủ tiền trước khi hết giờ!</p>
+        <button id="btn-start" type="button">Bắt đầu</button>
       </div>
     </div>
 
     <footer class="hint">
-      <kbd>Space</kbd> / <kbd>Click</kbd> thả móc · <kbd>R</kbd> chơi lại
+      <span class="hint-desktop"><kbd>Space</kbd> / <kbd>Click</kbd> thả móc · <kbd>R</kbd> chơi lại</span>
+      <span class="hint-mobile">Chạm màn hình hoặc nút <strong>THẢ MÓC</strong> để chơi</span>
     </footer>
   </div>
 
+  <script src="js/sound.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>

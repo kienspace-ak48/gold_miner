@@ -14,6 +14,13 @@
   const overlayTitle = document.getElementById("overlay-title");
   const overlayMsg = document.getElementById("overlay-msg");
   const btnStart = document.getElementById("btn-start");
+  const btnSound = document.getElementById("btn-sound");
+  const btnHook = document.getElementById("btn-hook");
+
+  const isTouchDevice =
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    matchMedia("(pointer: coarse)").matches;
 
   const PIVOT = { x: W / 2, y: 72 };
   const ROPE_LEN = 70;
@@ -54,6 +61,7 @@
   let grabbed = null;
   let lastTime = 0;
   let timerAccum = 0;
+  let prevControlsKey = "";
 
   function getLevelConfig() {
     const idx = Math.min(level - 1, LEVELS.length - 1);
@@ -144,15 +152,39 @@
     elTimer.style.color = timeLeft <= 10 ? "#ff6b6b" : "#ffd700";
   }
 
+  function getDefaultHint() {
+    return isTouchDevice
+      ? "Chạm màn hình hoặc bấm nút THẢ MÓC để hút vàng. Thu đủ tiền trước khi hết giờ!"
+      : "Nhấn Space hoặc Click để thả móc. Thu thập đủ tiền trước khi hết giờ!";
+  }
+
+  function setPlayingLayout(active) {
+    document.body.classList.toggle("is-playing", active);
+  }
+
+  function updateMobileControls() {
+    const key = state + ":" + hookState;
+    if (key === prevControlsKey) return;
+    prevControlsKey = key;
+
+    const canHook = state === "playing" && hookState === "swing";
+    btnHook.disabled = !canHook;
+    btnHook.classList.toggle("ready", canHook);
+    setPlayingLayout(state === "playing");
+  }
+
   function showOverlay(title, msg, btnText) {
     overlayTitle.textContent = title;
     overlayMsg.textContent = msg;
     btnStart.textContent = btnText;
     overlay.classList.remove("hidden");
+    setPlayingLayout(false);
+    updateMobileControls();
   }
 
   function hideOverlay() {
     overlay.classList.add("hidden");
+    updateMobileControls();
   }
 
   function startLevel() {
@@ -168,6 +200,7 @@
     updateHUD();
     state = "playing";
     hideOverlay();
+    Sound.startLevel();
   }
 
   function startGame() {
@@ -183,6 +216,10 @@
 
   function endLevel(won) {
     state = won ? "levelComplete" : "gameOver";
+    Sound.stopBgm();
+    if (won) Sound.win();
+    else Sound.lose();
+
     const cfg = getLevelConfig();
     if (won) {
       showOverlay(
@@ -232,6 +269,7 @@
     if (!grabbed) return;
     const tip = hookTip();
     money += grabbed.value;
+    Sound.collect(grabbed.value);
     addParticles(tip.x, tip.y, grabbed.color, 12);
     if (grabbed.value >= 100) {
       addParticles(tip.x, tip.y, "#ffd700", 8);
@@ -248,6 +286,9 @@
       timerAccum -= 1000;
       timeLeft -= 1;
       updateHUD();
+      if (timeLeft <= 10) {
+        Sound.tick(timeLeft <= 5);
+      }
       if (timeLeft <= 0) {
         const cfg = getLevelConfig();
         endLevel(money >= cfg.target);
@@ -265,6 +306,7 @@
 
       if (tip.y >= H - 10 || tip.x <= 5 || tip.x >= W - 5) {
         hookState = "retract";
+        Sound.retractEmpty();
         return;
       }
 
@@ -275,6 +317,7 @@
           grabbed = it;
           items.splice(i, 1);
           hookState = "retract";
+          Sound.grab(it.type);
           return;
         }
       }
@@ -294,6 +337,7 @@
         ropeLen = ROPE_LEN;
         if (grabbed) releaseGrabbed();
         hookState = "swing";
+        updateMobileControls();
       }
     }
 
@@ -482,7 +526,7 @@
     drawRopeAndHook();
     drawParticles();
 
-    if (state === "playing" && hookState === "swing") {
+    if (state === "playing" && hookState === "swing" && !isTouchDevice) {
       ctx.fillStyle = "rgba(255,215,0,0.7)";
       ctx.font = "13px sans-serif";
       ctx.textAlign = "center";
@@ -499,12 +543,36 @@
   }
 
   function onHookAction() {
+    Sound.init();
     if (state === "playing" && hookState === "swing") {
       hookState = "extend";
+      Sound.hookDrop();
+      updateMobileControls();
     }
   }
 
-  canvas.addEventListener("click", onHookAction);
+  function updateSoundButton() {
+    btnSound.textContent = Sound.isEnabled() ? "🔊" : "🔇";
+    btnSound.classList.toggle("muted", !Sound.isEnabled());
+  }
+
+  let lastHookAt = 0;
+
+  function onHookPointer(e) {
+    if (e.cancelable) e.preventDefault();
+    const now = Date.now();
+    if (now - lastHookAt < 280) return;
+    lastHookAt = now;
+    onHookAction();
+  }
+
+  canvas.addEventListener("click", onHookPointer);
+  canvas.addEventListener("touchend", onHookPointer, { passive: false });
+
+  btnHook.addEventListener("click", (e) => {
+    e.preventDefault();
+    onHookPointer(e);
+  });
 
   document.addEventListener("keydown", (e) => {
     if (e.code === "Space") {
@@ -518,17 +586,35 @@
     }
   });
 
-  btnStart.addEventListener("click", () => {
+  function onStartClick(e) {
+    if (e) e.preventDefault();
+    Sound.init();
     if (state === "menu") startGame();
     else if (state === "levelComplete") nextLevel();
     else if (state === "gameOver") startLevel();
+  }
+
+  btnStart.addEventListener("click", onStartClick);
+  btnStart.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    onStartClick(e);
+  }, { passive: false });
+
+  btnSound.addEventListener("click", (e) => {
+    e.preventDefault();
+    Sound.init();
+    Sound.toggle();
+    updateSoundButton();
   });
 
+  document.addEventListener("touchmove", (e) => {
+    if (state === "playing" && e.target === canvas) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  updateSoundButton();
   updateHUD();
-  showOverlay(
-    "Đào Vàng",
-    "Nhấn Space hoặc Click để thả móc. Thu thập đủ tiền trước khi hết giờ!",
-    "Bắt đầu"
-  );
+  showOverlay("Đào Vàng", getDefaultHint(), "Bắt đầu");
   requestAnimationFrame(loop);
 })();
