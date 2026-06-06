@@ -1,0 +1,134 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #1a0f0a 0%, #2d1810 40%, #0f1a14 100%);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #f5e6c8;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.hud {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid #8b6914;
+  border-radius: 12px;
+  padding: 10px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.hud-item {
+  text-align: center;
+  min-width: 80px;
+}
+
+.hud-item .label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #c9a84c;
+  margin-bottom: 2px;
+}
+
+.hud-item span:last-child {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+#game {
+  display: block;
+  border: 3px solid #6b4f1d;
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px #3d2a0f,
+    0 12px 40px rgba(0, 0, 0, 0.6);
+  cursor: crosshair;
+  max-width: 100%;
+  height: auto;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 4, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.panel {
+  background: linear-gradient(180deg, #3d2817 0%, #2a1a0f 100%);
+  border: 3px solid #c9a84c;
+  border-radius: 16px;
+  padding: 36px 48px;
+  text-align: center;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.panel h1 {
+  font-size: 2.2rem;
+  color: #ffd700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  margin-bottom: 12px;
+}
+
+.panel p {
+  color: #e8d5a8;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+#btn-start {
+  background: linear-gradient(180deg, #e8b923 0%, #b8860b 100%);
+  border: 2px solid #ffd700;
+  color: #1a0f0a;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 12px 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+#btn-start:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #8a7a5a;
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #6b5a3a;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: inherit;
+}

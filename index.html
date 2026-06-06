@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đào Vàng</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="hud">
+      <div class="hud-item">
+        <span class="label">Màn</span>
+        <span id="level">1</span>
+      </div>
+      <div class="hud-item">
+        <span class="label">Tiền</span>
+        <span id="money">$0</span>
+      </div>
+      <div class="hud-item">
+        <span class="label">Mục tiêu</span>
+        <span id="target">$650</span>
+      </div>
+      <div class="hud-item">
+        <span class="label">Thời gian</span>
+        <span id="timer">60</span>
+      </div>
+    </header>
+
+    <canvas id="game" width="900" height="600"></canvas>
+
+    <div id="overlay" class="overlay hidden">
+      <div class="panel">
+        <h1 id="overlay-title">Đào Vàng</h1>
+        <p id="overlay-msg">Nhấn Space hoặc Click để thả móc. Thu thập đủ tiền trước khi hết giờ!</p>
+        <button id="btn-start">Bắt đầu</button>
+      </div>
+    </div>
+
+    <footer class="hint">
+      <kbd>Space</kbd> / <kbd>Click</kbd> thả móc · <kbd>R</kbd> chơi lại
+    </footer>
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>
